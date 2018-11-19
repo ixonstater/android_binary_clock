@@ -13,7 +13,4 @@
     <string name="settings_button_3">Circle Outline Color</string>
     <string name="settings_button_2">Background Color</string>
     <string name="settings_button_1">Circle Color</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

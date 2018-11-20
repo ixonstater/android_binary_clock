@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ColorSelector"
@@ -10,7 +10,77 @@
                 android:layout_width="300dp"
                 android:layout_height="450dp"
                 android:background="#FFFFFF"
-                android:layout_gravity="center">
+                android:layout_gravity="center" android:orientation="vertical">
+
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp">
+
+                <ImageView
+                        android:src="#FFFFFF"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp" android:id="@+id/imageView"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:contentDescription="@string/app_name"/>
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="300dp"
+                    android:layout_height="60dp">
+                <SeekBar
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content" android:id="@+id/seekBarR"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:progress="100"
+                        android:progressDrawable="@drawable/seekbarr_progress"/>
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp">
+                <SeekBar
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content" android:id="@+id/seekBarG"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:progress="100"
+                        android:progressDrawable="@drawable/seekbarg_progress"/>
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp">
+                <SeekBar
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content" android:id="@+id/seekBarB"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:progress="100"
+                        android:progressDrawable="@drawable/seekbarb_progress"/>
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp">
+               <EditText
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:inputType="text"
+                       android:hint="@string/hex_entry_hint"
+                       android:autofillHints="@string/hex_entry_hint"
+
+               />
+            </android.support.constraint.ConstraintLayout>
 
         </LinearLayout>
 </FrameLayout>

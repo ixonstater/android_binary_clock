@@ -13,4 +13,5 @@
     <string name="settings_button_3">Circle Outline Color</string>
     <string name="settings_button_2">Background Color</string>
     <string name="settings_button_1">Circle Color</string>
+    <string name="hex_entry_hint">#FFFFFF</string>
 </resources>

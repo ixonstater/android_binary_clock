@@ -17,7 +17,4 @@ class ColorSelector : DialogFragment() {
         return inflater.inflate(R.layout.fragment_color_selector, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
 }

@@ -1,4 +1,5 @@
 package io.codefordays.binaryclock
+import android.app.Activity
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private var clockDigits = MutableList(0){ImageView(this)}
     private lateinit var drawer: DrawerLayout
     private lateinit var userSettings: UserDefinedSettings
+    private lateinit var userSettingsContainer: SettingsContainer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +55,11 @@ class MainActivity : AppCompatActivity() {
         timer(period = 1000){runOnUiThread{updateDisplay()}}
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateToMatchSettings()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
@@ -60,6 +67,16 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == SETTINGS_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            if(data?.getSerializableExtra("userSettings") != null){
+                this.userSettingsContainer.setSettings(data.getSerializableExtra("userSettings") as UserDefinedSettings)
+                this.userSettings = this.userSettingsContainer.getSettings()
+            }
         }
     }
 
@@ -86,6 +103,11 @@ class MainActivity : AppCompatActivity() {
         drawer = findViewById(R.id.drawer_layout)
         drawer.bringToFront()
         findViewById<ConstraintLayout>(R.id.root_elem).setBackgroundColor(this.userSettings.backgroundColor)
+    }
+
+    private fun makeSettingsContainer(){
+        this.userSettingsContainer = ViewModelProviders.of(this).get(SettingsContainer::class.java)
+        this.userSettings = this.userSettingsContainer.getSettings()
     }
 
     private fun setupEventHandlers(){
@@ -118,9 +140,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun makeSettingsContainer(){
-        val model = ViewModelProviders.of(this).get(SettingsContainer::class.java)
-        this.userSettings = model.getSettings()
+    private fun updateToMatchSettings(){
+        findViewById<ConstraintLayout>(R.id.root_elem).setBackgroundColor(this.userSettings.backgroundColor)
+        for (digit in this.clockDigits){
+            val myGrad = digit.drawable as GradientDrawable
+            myGrad.setStroke(this.dpToPx(4), this.userSettings.circleOuterColor)
+        }
     }
 
     private fun updateDisplay() {

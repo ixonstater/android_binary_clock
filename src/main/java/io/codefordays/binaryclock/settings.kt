@@ -1,4 +1,7 @@
 package io.codefordays.binaryclock
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -23,6 +26,11 @@ class Settings : AppCompatActivity(){
         if(supportFragmentManager.findFragmentByTag("color_selector_frag") != null){
             this.disableButtons()
         }
+
+        val myIntent = Intent()
+        myIntent.putExtra("userSettings", userSettings)
+        setResult(Activity.RESULT_OK, myIntent)
+        userSettings.backgroundColor = Color.parseColor("#000000")
     }
 
     override fun onBackPressed() {

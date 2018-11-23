@@ -35,7 +35,7 @@
 
             <android.support.constraint.ConstraintLayout
                     android:layout_width="300dp"
-                    android:layout_height="50dp">
+                    android:layout_height="60dp">
                 <SeekBar
                         android:layout_width="250dp"
                         android:layout_height="wrap_content" android:id="@+id/seekBarR"
@@ -49,7 +49,7 @@
 
             <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp">
+                    android:layout_height="60dp">
                 <SeekBar
                         android:layout_width="250dp"
                         android:layout_height="wrap_content" android:id="@+id/seekBarG"
@@ -63,7 +63,7 @@
 
             <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp">
+                    android:layout_height="60dp">
                 <SeekBar
                         android:layout_width="250dp"
                         android:layout_height="wrap_content" android:id="@+id/seekBarB"
@@ -89,7 +89,9 @@
                         android:layout_height="wrap_content"
                         android:inputType="text"
                         android:hint="@string/hex_entry_hint"
-                        android:autofillHints="@string/hex_entry_hint"/>
+                        android:autofillHints="@string/hex_entry_hint"
+                        android:imeOptions="flagNoExtractUi"/>
+
             </android.support.constraint.ConstraintLayout>
 
             <android.support.constraint.ConstraintLayout

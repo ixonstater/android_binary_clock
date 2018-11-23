@@ -7,6 +7,7 @@ class Settings : AppCompatActivity(){
 
     private var buttons = MutableList(0){Button(this)}
     private var colorSelectorFrag: ColorSelector? = null
+    private var userSettings = UserDefinedSettings()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +27,8 @@ class Settings : AppCompatActivity(){
 
     override fun onBackPressed() {
         super.onBackPressed()
-        for (button in buttons){
-            button.isEnabled = true
+        if(supportFragmentManager.findFragmentByTag("color_selector_frag") == null) {
+            enableButtons()
         }
     }
 
@@ -44,6 +45,12 @@ class Settings : AppCompatActivity(){
     private fun disableButtons(){
         for (button in buttons){
             button.isEnabled = false
+        }
+    }
+
+    private fun enableButtons(){
+        for (button in buttons){
+            button.isEnabled = true
         }
     }
 

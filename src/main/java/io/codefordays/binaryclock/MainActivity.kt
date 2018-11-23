@@ -1,4 +1,6 @@
 package io.codefordays.binaryclock
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
@@ -18,6 +20,7 @@ import kotlin.concurrent.timer
 import android.util.TypedValue
 
 
+const val SETTINGS_REQUEST_CODE = 1
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,12 +37,13 @@ class MainActivity : AppCompatActivity() {
     private var horizontalOffset = 20
     private var clockDigits = MutableList(0){ImageView(this)}
     private lateinit var drawer: DrawerLayout
-    private var userSettings = UserDefinedSettings()
+    private lateinit var userSettings: UserDefinedSettings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         getRuntimeXMLVals()
+        makeSettingsContainer()
         createDisplay()
         setupEventHandlers()
     }
@@ -88,8 +92,8 @@ class MainActivity : AppCompatActivity() {
         val myNavView: NavigationView = findViewById(R.id.nav_view)
         myNavView.setNavigationItemSelectedListener { menuItem ->
             when(menuItem.itemId){
-                R.id.nav_settings -> startActivity(Intent(applicationContext, Settings::class.java))
-                R.id.nav_about -> startActivity(Intent(applicationContext, About::class.java))
+                R.id.nav_settings -> startActivityForResult(Intent(this, Settings::class.java), SETTINGS_REQUEST_CODE)
+                R.id.nav_about -> startActivity(Intent(this, About::class.java))
             }
             drawer.closeDrawer(GravityCompat.START)
             true
@@ -114,6 +118,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun makeSettingsContainer(){
+        val model = ViewModelProviders.of(this).get(SettingsContainer::class.java)
+        this.userSettings = model.getSettings()
+    }
+
     private fun updateDisplay() {
         val binDigits = myClock.run()
         for (i in 0..19) {
@@ -128,4 +137,21 @@ class MainActivity : AppCompatActivity() {
     private fun dpToPx(dp: Int) : Int{
         return (dp * this.resources.displayMetrics.density).toInt()
     }
+}
+
+
+class SettingsContainer : ViewModel(){
+    private lateinit var userSettings: UserDefinedSettings
+
+    fun getSettings() : UserDefinedSettings{
+        if(!::userSettings.isInitialized){
+            userSettings = UserDefinedSettings()
+        }
+        return userSettings
+    }
+
+    fun setSettings(userSettings: UserDefinedSettings){
+        this.userSettings = userSettings
+    }
+
 }

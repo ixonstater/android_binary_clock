@@ -78,6 +78,7 @@
                        android:inputType="text"
                        android:hint="@string/hex_entry_hint"
                        android:autofillHints="@string/hex_entry_hint"
+                       android:imeOptions="flagNoExtractUi"
 
                />
             </android.support.constraint.ConstraintLayout>

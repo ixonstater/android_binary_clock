@@ -1,7 +1,5 @@
 package io.codefordays.binaryclock
-import android.app.Activity
-import android.content.Intent
-import android.graphics.Color
+import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -9,8 +7,7 @@ import android.widget.Button
 class Settings : AppCompatActivity(){
 
     private var buttons = MutableList(0){Button(this)}
-    private var colorSelectorFrag: ColorSelector? = null
-    private var userSettings = UserDefinedSettings()
+    private lateinit var settings: PersistSettings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,10 +24,9 @@ class Settings : AppCompatActivity(){
             this.disableButtons()
         }
 
-        val myIntent = Intent()
-        myIntent.putExtra("userSettings", userSettings)
-        setResult(Activity.RESULT_OK, myIntent)
-        userSettings.backgroundColor = Color.parseColor("#000000")
+        settings = ViewModelProviders.of(this).get(PersistSettings::class.java)
+        settings.getColorSettingsFromFile()
+
     }
 
     override fun onBackPressed() {
@@ -40,14 +36,21 @@ class Settings : AppCompatActivity(){
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        settings.writeSettingsToFile()
+    }
+
     private fun launchColorSelector(button: Int){
         val fragTrans = supportFragmentManager.beginTransaction()
         val frag = ColorSelector()
+        val args = Bundle()
+        args.putInt("buttonNumber", button)
+        frag.arguments = args
         fragTrans.add(R.id.frag_root, frag, "color_selector_frag")
         fragTrans.addToBackStack(null)
         fragTrans.commit()
         disableButtons()
-        colorSelectorFrag = frag
     }
 
     private fun disableButtons(){
@@ -62,7 +65,8 @@ class Settings : AppCompatActivity(){
         }
     }
 
-    private fun updateSettings(){
-
+    fun setColorSettings(newSetting: Int, RGB: String){
+        this.settings.setColorSettings(newSetting, RGB)
     }
 }
+

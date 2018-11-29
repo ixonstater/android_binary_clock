@@ -1,12 +1,10 @@
 package io.codefordays.binaryclock
-import android.app.Activity
-import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.NavigationView
@@ -38,14 +36,14 @@ class MainActivity : AppCompatActivity() {
     private var horizontalOffset = 20
     private var clockDigits = MutableList(0){ImageView(this)}
     private lateinit var drawer: DrawerLayout
-    private lateinit var userSettings: UserDefinedSettings
-    private lateinit var userSettingsContainer: SettingsContainer
+    private lateinit var settingsContainer: PersistSettings
+    private lateinit var settings: Array<Int>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        getSettings()
         getRuntimeXMLVals()
-        makeSettingsContainer()
         createDisplay()
         setupEventHandlers()
     }
@@ -53,11 +51,6 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         timer(period = 1000){runOnUiThread{updateDisplay()}}
-    }
-
-    override fun onResume() {
-        super.onResume()
-        updateToMatchSettings()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -70,22 +63,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == SETTINGS_REQUEST_CODE && resultCode == Activity.RESULT_OK){
-            if(data?.getSerializableExtra("userSettings") != null){
-                this.userSettingsContainer.setSettings(data.getSerializableExtra("userSettings") as UserDefinedSettings)
-                this.userSettings = this.userSettingsContainer.getSettings()
-            }
-        }
+    private fun getSettings(){
+        settingsContainer = ViewModelProviders.of(this).get(PersistSettings::class.java)
+        this.settings = settingsContainer.getColorSettingsFromFile()
+
     }
 
     private fun createDisplay(){
         val myInflater = this.layoutInflater
         for (i in 0..19){
             val digit = myInflater.inflate(R.layout.circle_view, null) as ImageView
-            val myGrad = digit.drawable as GradientDrawable
-            myGrad.setStroke(this.dpToPx(4), this.userSettings.circleOuterColor)
             if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
                 digit.setPadding((digitCoords[i].second * horizontalStep + horizontalOffset).toInt(), (digitCoords[i].first * verticalStep + verticalOffset).toInt(), 0, 0)
             } else {
@@ -102,12 +89,6 @@ class MainActivity : AppCompatActivity() {
         }
         drawer = findViewById(R.id.drawer_layout)
         drawer.bringToFront()
-        findViewById<ConstraintLayout>(R.id.root_elem).setBackgroundColor(this.userSettings.backgroundColor)
-    }
-
-    private fun makeSettingsContainer(){
-        this.userSettingsContainer = ViewModelProviders.of(this).get(SettingsContainer::class.java)
-        this.userSettings = this.userSettingsContainer.getSettings()
     }
 
     private fun setupEventHandlers(){
@@ -140,21 +121,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateToMatchSettings(){
-        findViewById<ConstraintLayout>(R.id.root_elem).setBackgroundColor(this.userSettings.backgroundColor)
-        for (digit in this.clockDigits){
-            val myGrad = digit.drawable as GradientDrawable
-            myGrad.setStroke(this.dpToPx(4), this.userSettings.circleOuterColor)
-        }
-    }
-
     private fun updateDisplay() {
         val binDigits = myClock.run()
         for (i in 0..19) {
             if (binDigits[i] == '0') {
                 clockDigits[i].setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY)
             } else {
-                clockDigits[i].setColorFilter(this.userSettings.circleInnerColor, PorterDuff.Mode.MULTIPLY)
+                clockDigits[i].setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.MULTIPLY)
             }
         }
     }
@@ -162,21 +135,4 @@ class MainActivity : AppCompatActivity() {
     private fun dpToPx(dp: Int) : Int{
         return (dp * this.resources.displayMetrics.density).toInt()
     }
-}
-
-
-class SettingsContainer : ViewModel(){
-    private lateinit var userSettings: UserDefinedSettings
-
-    fun getSettings() : UserDefinedSettings{
-        if(!::userSettings.isInitialized){
-            userSettings = UserDefinedSettings()
-        }
-        return userSettings
-    }
-
-    fun setSettings(userSettings: UserDefinedSettings){
-        this.userSettings = userSettings
-    }
-
 }

@@ -1,4 +1,5 @@
 package io.codefordays.binaryclock
+import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -6,8 +7,8 @@ import android.widget.Button
 
 class Settings : AppCompatActivity(){
 
+    private lateinit var settingsData: SettingsData
     private var buttons = MutableList(0){Button(this)}
-    private lateinit var settings: PersistSettings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,9 +24,8 @@ class Settings : AppCompatActivity(){
         if(supportFragmentManager.findFragmentByTag("color_selector_frag") != null){
             this.disableButtons()
         }
-
-        settings = ViewModelProviders.of(this).get(PersistSettings::class.java)
-        settings.getColorSettingsFromFile()
+        settingsData = ViewModelProviders.of(this).get(SettingsData::class.java)
+        settingsData.pullData()
 
     }
 
@@ -38,7 +38,7 @@ class Settings : AppCompatActivity(){
 
     override fun onPause() {
         super.onPause()
-        settings.writeSettingsToFile()
+        settingsData.pushData()
     }
 
     private fun launchColorSelector(button: Int){
@@ -64,9 +64,23 @@ class Settings : AppCompatActivity(){
             button.isEnabled = true
         }
     }
-
-    fun setColorSettings(newSetting: Int, RGB: String){
-        this.settings.setColorSettings(newSetting, RGB)
-    }
 }
 
+class SettingsData : ViewModel(){
+    private val pushCode = 1452
+    private val pullCode = 1724
+    private lateinit var colorSettings: Array<Int>
+    fun pushData(){
+        DataModel.colorSettings.setColorSettings(colorSettings, pushCode)
+    }
+    fun pullData(){
+            this.colorSettings = DataModel.colorSettings.getColorSettings(pullCode)
+    }
+
+    fun getColorSettings(): Array<Int>{
+        return this.colorSettings
+    }
+    fun setColorSettings(newSetting: Int, target: Int){
+        this.colorSettings[target] = newSetting
+    }
+}

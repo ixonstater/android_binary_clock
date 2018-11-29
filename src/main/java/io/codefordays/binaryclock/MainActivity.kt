@@ -1,5 +1,5 @@
 package io.codefordays.binaryclock
-import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.res.Configuration
@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
     private var horizontalOffset = 20
     private var clockDigits = MutableList(0){ImageView(this)}
     private lateinit var drawer: DrawerLayout
-    private lateinit var settingsContainer: PersistSettings
     private lateinit var settings: Array<Int>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,8 +63,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getSettings(){
-        settingsContainer = ViewModelProviders.of(this).get(PersistSettings::class.java)
-        this.settings = settingsContainer.getColorSettingsFromFile()
 
     }
 
@@ -135,4 +132,8 @@ class MainActivity : AppCompatActivity() {
     private fun dpToPx(dp: Int) : Int{
         return (dp * this.resources.displayMetrics.density).toInt()
     }
+}
+
+class MainActivityData : ViewModel(){
+
 }

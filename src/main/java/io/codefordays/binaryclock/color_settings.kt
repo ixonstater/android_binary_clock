@@ -16,13 +16,9 @@ class ColorSettings{
         colorSettingsArr[2] = DEFAULT_INNER
     }
 
-    fun setColorSettings(newSetting: Int, Target: Int, code: Int){
+    fun setColorSettings(newSettings: Array<Int>, code: Int){
         if(code != setColorSettingsCode){ throw error("Bad data mutate attempt. Expecting $setColorSettingsCode, got $code") }
-        when(Target){
-            0 -> this.colorSettingsArr[0] = newSetting
-            1 -> this.colorSettingsArr[1] = newSetting
-            2 -> this.colorSettingsArr[2] = newSetting
-        }
+        colorSettingsArr = newSettings
     }
 
     fun getColorSettings(code: Int) : Array<Int>{

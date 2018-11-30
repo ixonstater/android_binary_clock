@@ -67,14 +67,14 @@ class Settings : AppCompatActivity(){
 }
 
 class SettingsData : ViewModel(){
-    private val pushCode = 1452
-    private val pullCode = 1724
+    private val colorSettingsPushCode = 1452
+    private val colorSettingsPullCode = 1724
     private lateinit var colorSettings: Array<Int>
     fun pushData(){
-        DataModel.colorSettings.setColorSettings(colorSettings, pushCode)
+        DataModel.colorSettings.setColorSettings(colorSettings, colorSettingsPushCode)
     }
     fun pullData(){
-            this.colorSettings = DataModel.colorSettings.getColorSettings(pullCode)
+        this.colorSettings = DataModel.colorSettings.getColorSettings(colorSettingsPullCode)
     }
 
     fun getColorSettings(): Array<Int>{

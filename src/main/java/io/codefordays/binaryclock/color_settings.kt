@@ -1,10 +1,5 @@
 package io.codefordays.binaryclock
 
-import android.graphics.Color
-const val DEFAULT_BACKGROUND = Color.WHITE
-const val DEFAULT_INNER = Color.BLUE
-const val DEFAULT_OUTER = Color.BLACK
-
 class ColorSettings{
     private lateinit var colorSettingsArr: Array<Int>
     private val setColorSettingsCode = 1452

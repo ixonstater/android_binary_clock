@@ -18,9 +18,6 @@ import android.widget.ImageView
 import kotlin.concurrent.timer
 import android.util.TypedValue
 
-
-const val SETTINGS_REQUEST_CODE = 1
-
 class MainActivity : AppCompatActivity() {
 
     private val myClock = Clock()
@@ -36,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private var horizontalOffset = 20
     private var clockDigits = MutableList(0){ImageView(this)}
     private lateinit var drawer: DrawerLayout
-    private lateinit var settings: Array<Int>
+    private lateinit var mainAcitvityData: MainActivityData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +42,9 @@ class MainActivity : AppCompatActivity() {
         getRuntimeXMLVals()
         createDisplay()
         setupEventHandlers()
+
+        mainAcitvityData = ViewModelProviders.of(this).get(MainActivityData::class.java)
+        mainAcitvityData.pullData()
     }
 
     override fun onStart() {
@@ -135,5 +135,12 @@ class MainActivity : AppCompatActivity() {
 }
 
 class MainActivityData : ViewModel(){
-
+    private val colorSettingsPullCode = 1724
+    private lateinit var colorSettings: Array<Int>
+    fun pullData(){
+        this.colorSettings = DataModel.colorSettings.getColorSettings(colorSettingsPullCode)
+    }
+    fun getColorSettings(): Array<Int>{
+        return colorSettings
+    }
 }

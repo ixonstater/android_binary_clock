@@ -17,9 +17,10 @@
                     android:layout_height="100dp">
 
                 <ImageView
-                        android:src="#FFFFFF"
+                        android:background="#FFFFFF"
                         android:layout_width="50dp"
-                        android:layout_height="50dp" android:id="@+id/imageView"
+                        android:layout_height="50dp"
+                        android:id="@+id/imageView"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"

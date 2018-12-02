@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.NavigationView
@@ -17,6 +18,8 @@ import android.view.MenuItem
 import android.widget.ImageView
 import kotlin.concurrent.timer
 import android.util.TypedValue
+import io.codefordays.binaryclock.io.codefordays.model.DataModel
+import io.codefordays.binaryclock.io.codefordays.model.SETTINGS_REQUEST_CODE
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,13 +41,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        getSettings()
+        mainAcitvityData = ViewModelProviders.of(this).get(MainActivityData::class.java)
+        mainAcitvityData.pullData()
         getRuntimeXMLVals()
         createDisplay()
         setupEventHandlers()
+    }
 
+    override fun onResume() {
+        super.onResume()
         mainAcitvityData = ViewModelProviders.of(this).get(MainActivityData::class.java)
         mainAcitvityData.pullData()
+        updateToMatchSettings()
     }
 
     override fun onStart() {
@@ -62,14 +70,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getSettings(){
-
-    }
-
     private fun createDisplay(){
         val myInflater = this.layoutInflater
         for (i in 0..19){
             val digit = myInflater.inflate(R.layout.circle_view, null) as ImageView
+            val gradDraw = digit.drawable as GradientDrawable
+            gradDraw.setStroke(dpToPx(4), mainAcitvityData.getColorSettings()[1])
             if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
                 digit.setPadding((digitCoords[i].second * horizontalStep + horizontalOffset).toInt(), (digitCoords[i].first * verticalStep + verticalOffset).toInt(), 0, 0)
             } else {
@@ -86,13 +92,24 @@ class MainActivity : AppCompatActivity() {
         }
         drawer = findViewById(R.id.drawer_layout)
         drawer.bringToFront()
+        findViewById<ConstraintLayout>(R.id.root_elem).setBackgroundColor(mainAcitvityData.getColorSettings()[0])
+    }
+
+    private fun updateToMatchSettings(){
+        for (digit in clockDigits){
+            val gradDraw = digit.drawable as GradientDrawable
+            gradDraw.setStroke(dpToPx(4), mainAcitvityData.getColorSettings()[1])
+        }
+        findViewById<ConstraintLayout>(R.id.root_elem).setBackgroundColor(mainAcitvityData.getColorSettings()[0])
     }
 
     private fun setupEventHandlers(){
         val myNavView: NavigationView = findViewById(R.id.nav_view)
         myNavView.setNavigationItemSelectedListener { menuItem ->
             when(menuItem.itemId){
-                R.id.nav_settings -> startActivityForResult(Intent(this, Settings::class.java), SETTINGS_REQUEST_CODE)
+                R.id.nav_settings -> startActivityForResult(Intent(this, Settings::class.java),
+                    SETTINGS_REQUEST_CODE
+                )
                 R.id.nav_about -> startActivity(Intent(this, About::class.java))
             }
             drawer.closeDrawer(GravityCompat.START)
@@ -124,7 +141,7 @@ class MainActivity : AppCompatActivity() {
             if (binDigits[i] == '0') {
                 clockDigits[i].setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY)
             } else {
-                clockDigits[i].setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.MULTIPLY)
+                clockDigits[i].setColorFilter(mainAcitvityData.getColorSettings()[2], PorterDuff.Mode.MULTIPLY)
             }
         }
     }
@@ -135,10 +152,9 @@ class MainActivity : AppCompatActivity() {
 }
 
 class MainActivityData : ViewModel(){
-    private val colorSettingsPullCode = 1724
     private lateinit var colorSettings: Array<Int>
     fun pullData(){
-        this.colorSettings = DataModel.colorSettings.getColorSettings(colorSettingsPullCode)
+        this.colorSettings = DataModel.colorSettings.getColorSettings()
     }
     fun getColorSettings(): Array<Int>{
         return colorSettings

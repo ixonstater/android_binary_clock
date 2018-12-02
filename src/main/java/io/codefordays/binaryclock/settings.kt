@@ -1,32 +1,26 @@
 package io.codefordays.binaryclock
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 
 class Settings : AppCompatActivity(){
 
-    private lateinit var settingsData: SettingsData
     private var buttons = MutableList(0){Button(this)}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
+        buttons.add(findViewById(R.id.button0))
         buttons.add(findViewById(R.id.button1))
         buttons.add(findViewById(R.id.button2))
-        buttons.add(findViewById(R.id.button3))
-        buttons[0].setOnClickListener { launchColorSelector(1) }
-        buttons[1].setOnClickListener { launchColorSelector(2) }
-        buttons[2].setOnClickListener { launchColorSelector(3) }
+        buttons[0].setOnClickListener { launchColorSelector(0) }
+        buttons[1].setOnClickListener { launchColorSelector(1) }
+        buttons[2].setOnClickListener { launchColorSelector(2) }
 
         if(supportFragmentManager.findFragmentByTag("color_selector_frag") != null){
             this.disableButtons()
         }
-        settingsData = ViewModelProviders.of(this).get(SettingsData::class.java)
-        settingsData.pullData()
-
     }
 
     override fun onBackPressed() {
@@ -34,11 +28,6 @@ class Settings : AppCompatActivity(){
         if(supportFragmentManager.findFragmentByTag("color_selector_frag") == null) {
             enableButtons()
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        settingsData.pushData()
     }
 
     private fun launchColorSelector(button: Int){
@@ -51,6 +40,11 @@ class Settings : AppCompatActivity(){
         fragTrans.addToBackStack(null)
         fragTrans.commit()
         disableButtons()
+    }
+
+    fun closeColorSelector(){
+        supportFragmentManager.popBackStack()
+        enableButtons()
     }
 
     private fun disableButtons(){
@@ -66,21 +60,3 @@ class Settings : AppCompatActivity(){
     }
 }
 
-class SettingsData : ViewModel(){
-    private val colorSettingsPushCode = 1452
-    private val colorSettingsPullCode = 1724
-    private lateinit var colorSettings: Array<Int>
-    fun pushData(){
-        DataModel.colorSettings.setColorSettings(colorSettings, colorSettingsPushCode)
-    }
-    fun pullData(){
-        this.colorSettings = DataModel.colorSettings.getColorSettings(colorSettingsPullCode)
-    }
-
-    fun getColorSettings(): Array<Int>{
-        return this.colorSettings
-    }
-    fun setColorSettings(newSetting: Int, target: Int){
-        this.colorSettings[target] = newSetting
-    }
-}
